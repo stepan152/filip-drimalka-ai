@@ -418,63 +418,46 @@ def prepare_knowledge_base():
     return embeddings, text_chunks, chunk_sources
 
 # Funkce pro získání odpovědi od Claude
-def get_claude_response(prompt, context=None):
+def get_claude_response_simple(prompt, context=None):
     try:
-        # Získáme API klíč z proměnné prostředí nebo ze Streamlit secrets
+        import requests
+        import json
+        
         api_key = st.secrets["ANTHROPIC_API_KEY"]
         
-        # Vytvoříme klienta - zjednodušený způsob inicializace
-        client = anthropic.Anthropic(api_key=api_key)
-        
-        # Příprava systémové zprávy
+        # Příprava dat pro API
         if context:
-            system_message = f"""
-            Jsi chatbot představující pohled Filipa Dřímalky na témata AI, digitální transformace a budoucnost práce.
-            Odpovídej v první osobě, jako by odpovídal přímo Filip Dřímalka - používej jeho styl komunikace, který je profesionální, 
-            optimistický a zaměřený na budoucnost. Buď konkrétní, uváděj příklady a praktické rady.
-            
-            Použij následující informace jako kontext pro svou odpověď:
-            
-            {context}
-            
-            Pokud otázka nesouvisí s tématy digitalizace, AI nebo budoucností práce, zdvořile odpověz, 
-            že se zaměřuješ především na tato témata a nabídni uživateli, že může položit otázku z těchto oblastí.
-            """
+            system_message = f"""Jsi chatbot představující pohled Filipa Dřímalky na témata AI, digitální transformace a budoucnost práce.
+            Odpovídej v první osobě, jako by odpovídal přímo Filip Dřímalka. Použij následující kontext: {context}"""
         else:
-            system_message = """
-            Jsi chatbot představující pohled Filipa Dřímalky na témata AI, digitální transformace a budoucnost práce.
-            Odpovídej v první osobě, jako by odpovídal přímo Filip Dřímalka - používej jeho styl komunikace, který je profesionální, 
-            optimistický a zaměřený na budoucnost.
-            
-            Na tuto otázku nemáš specifické informace od Filipa Dřímalky. Nabídni obecnou odpověď z pohledu 
-            odborníka na digitální transformaci a AI a navrhni uživateli, aby se zeptal na jiné téma spojené 
-            s digitální transformací a budoucností práce.
-            """
+            system_message = """Jsi chatbot představující pohled Filipa Dřímalky na témata AI, digitální transformace a budoucnost práce."""
         
-        # Volání API s ošetřením různých verzí knihovny
-        try:
-            response = client.messages.create(
-                model="claude-3-opus-20240229",
-                max_tokens=1000,
-                system=system_message,
-                messages=[
-                    {"role": "user", "content": prompt}
-                ]
-            )
-            return response.content[0].text
-        except AttributeError:
-            # Fallback pro starší verze knihovny
-            response = client.completion(
-                prompt=f"\n\nHuman: {prompt}\n\nAssistant:",
-                max_tokens_to_sample=1000,
-                model="claude-3-opus-20240229",
-                system=system_message
-            )
-            return response.completion
+        headers = {
+            "x-api-key": api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json"
+        }
         
+        data = {
+            "model": "claude-3-opus-20240229",
+            "max_tokens": 1000,
+            "system": system_message,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+        
+        response = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers=headers,
+            json=data
+        )
+        
+        if response.status_code == 200:
+            return response.json()["content"][0]["text"]
+        else:
+            return f"Chyba API: {response.status_code}, {response.text}"
+    
     except Exception as e:
-        st.error(f"Chyba při komunikaci s Claude API: {str(e)}")
-        return "Omlouvám se, došlo k technické chybě při zpracování vaší otázky. Zkuste to prosím později nebo položte jinou otázku."
+        return f"Chyba: {str(e)}"
 
 # Funkce pro zpracování dotazu
 def process_query(query):
