@@ -113,10 +113,10 @@ if 'text_chunks' not in st.session_state:
 if 'chunk_sources' not in st.session_state:
     st.session_state.chunk_sources = None
 
-# Inicializace znalostní báze při prvním spuštění
-if st.session_state.embeddings is None:
-    with st.spinner('Načítám znalostní bázi...'):
-        st.session_state.embeddings, st.session_state.text_chunks, st.session_state.chunk_sources = prepare_knowledge_base()
+# Inicializace sentence-transformers modelu
+@st.cache_resource
+def get_embedding_model():
+    return SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 
 # Rozšířená znalostní báze - myšlenky Filipa Dřímalky
 @st.cache_data
@@ -336,11 +336,6 @@ suggested_questions = [
     "Co Filip Dřímalka říkal o AI ve své TEDx přednášce?",
     "Jak se podle Filipa Dřímalky mění pracovní prostředí v digitální éře?"
 ]
-
-# Inicializace sentence-transformers modelu
-@st.cache_resource
-def get_embedding_model():
-    return SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 
 # Funkce pro rozdělení delších textů na menší chunky
 def create_text_chunks(knowledge_base, chunk_size=500, overlap=100):
@@ -599,6 +594,11 @@ def main():
         <p class="small-font">Vytvořeno jako demonstrace AI schopností. Tento chatbot představuje pohled Filipa Dřímalky založený na jeho veřejných vystoupeních a publikacích.</p>
     </div>
     """, unsafe_allow_html=True)
+
+# Inicializace znalostní báze při prvním spuštění
+if st.session_state.embeddings is None:
+    with st.spinner('Načítám znalostní bázi...'):
+        st.session_state.embeddings, st.session_state.text_chunks, st.session_state.chunk_sources = prepare_knowledge_base()
 
 # Spuštění aplikace
 if __name__ == "__main__":
