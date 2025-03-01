@@ -423,7 +423,7 @@ def get_claude_response(prompt, context=None):
         # Získáme API klíč z proměnné prostředí nebo ze Streamlit secrets
         api_key = st.secrets["ANTHROPIC_API_KEY"]
         
-        # Vytvoříme klienta
+        # Vytvoříme klienta - zjednodušený způsob inicializace
         client = anthropic.Anthropic(api_key=api_key)
         
         # Příprava systémové zprávy
@@ -451,17 +451,27 @@ def get_claude_response(prompt, context=None):
             s digitální transformací a budoucností práce.
             """
         
-        # Volání API
-        response = client.messages.create(
-            model="claude-3-opus-20240229",
-            max_tokens=1000,
-            system=system_message,
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
-        )
+        # Volání API s ošetřením různých verzí knihovny
+        try:
+            response = client.messages.create(
+                model="claude-3-opus-20240229",
+                max_tokens=1000,
+                system=system_message,
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            return response.content[0].text
+        except AttributeError:
+            # Fallback pro starší verze knihovny
+            response = client.completion(
+                prompt=f"\n\nHuman: {prompt}\n\nAssistant:",
+                max_tokens_to_sample=1000,
+                model="claude-3-opus-20240229",
+                system=system_message
+            )
+            return response.completion
         
-        return response.content[0].text
     except Exception as e:
         st.error(f"Chyba při komunikaci s Claude API: {str(e)}")
         return "Omlouvám se, došlo k technické chybě při zpracování vaší otázky. Zkuste to prosím později nebo položte jinou otázku."
