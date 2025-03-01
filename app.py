@@ -1,6 +1,5 @@
 import streamlit as st
 from sentence_transformers import SentenceTransformer
-import faiss
 import numpy as np
 import re
 import os
@@ -10,6 +9,7 @@ import anthropic  # pro Claude API
 import json
 from io import BytesIO
 import requests
+from sklearn.metrics.pairwise import cosine_similarity
 
 # Konfigurace stránky
 st.set_page_config(
@@ -97,111 +97,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Funkce pro načtení obrázku z URL
-@st.cache_data
-def load_image_from_url(url):
-    try:
-        response = requests.get(url)
-        img = Image.open(BytesIO(response.content))
-        return img
-    except Exception as e:
-        st.error(f"Chyba při načítání obrázku: {e}")
-        return None
-
-# Hlavní UI aplikace
-def main():
-    # Rozdělení na dva sloupce - sidebar a hlavní obsah
-    col1, col2 = st.columns([1, 3])
-    
-    # Hlavní sekce - levý sloupec pro profil
-    with col1:
-        st.image("https://filipdrimalka.cz/wp-content/uploads/2023/12/Filip-Drimalka-square.jpg", width=200)
-        st.markdown("<h2>Filip Dřímalka</h2>", unsafe_allow_html=True)
-        st.markdown("""
-        <div class="sidebar-info">
-            <p>Expert na digitální transformaci a autor knihy "Budoucnost (ne)práce".</p>
-            <p>Věří, že budoucnost patří lidem, kteří dokáží efektivně využívat AI jako svého asistenta.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("### Klíčová témata")
-        
-        # Klíčová témata jako kliknutelná tlačítka
-        topics = [
-            "Digitální transformace", 
-            "Budoucnost práce", 
-            "Hybridní inteligence",
-            "Celoživotní vzdělávání",
-            "Implementace AI",
-            "Společnost 5.0"
-        ]
-        
-        for topic in topics:
-            st.markdown(f'<div class="topic-pill" onclick="this.style.backgroundColor=\'#1E6FD9\';this.style.color=\'white\'">{topic}</div>', unsafe_allow_html=True)
-    
-    # Hlavní sekce
-    with col2:
-        st.markdown('<p class="main-header">AI Průvodce myšlenkami Filipa Dřímalky</p>', unsafe_allow_html=True)
-        st.markdown("Zeptejte se na cokoli o digitální transformaci, AI a budoucnosti práce z pohledu Filipa Dřímalky.")
-        
-        # Výběr z doporučených otázek
-        st.markdown('<p class="sub-header">Doporučené otázky:</p>', unsafe_allow_html=True)
-        selected_question = st.selectbox("", [""] + suggested_questions)
-        
-        # Vlastní otázka
-        st.markdown('<p class="sub-header">Nebo napište vlastní otázku:</p>', unsafe_allow_html=True)
-        user_input = st.text_input("", placeholder="Např.: Jak se připravit na změny způsobené AI?")
-        
-        # Odeslání dotazu
-        query = user_input if user_input else selected_question
-        
-        col_button1, col_button2 = st.columns([1, 5])
-        with col_button1:
-            if st.button("Odeslat"):
-                if query:
-                    with st.spinner('Filip přemýšlí nad odpovědí...'):
-                        # Získání odpovědi
-                        response, sources = process_query(query)
-                        
-                        # Přidání do historie konverzace
-                        st.session_state.conversation.append({"role": "user", "content": query})
-                        st.session_state.conversation.append({"role": "assistant", "content": response, "sources": sources})
-                else:
-                    st.warning("Prosím, zadejte otázku nebo vyberte z nabídky.")
-        
-        with col_button2:
-            if st.button("Nová konverzace"):
-                st.session_state.conversation = []
-                st.experimental_rerun()
-        
-        # Zobrazení historie konverzace
-        st.markdown("### Konverzace:")
-        
-        for message in st.session_state.conversation:
-            if message["role"] == "user":
-                st.markdown(f'<div class="message-container user-message"><strong>Vy:</strong> {message["content"]}</div>', unsafe_allow_html=True)
-            else:
-                source_text = ""
-                if "sources" in message and message["sources"]:
-                    sources = list(set([source.replace("_", " ") for source in message["sources"]]))
-                    source_text = f'<div class="citation">Zdroje: {", ".join(sources)}</div>'
-                
-                st.markdown(
-                    f'<div class="message-container assistant-message"><strong>Filip Dřímalka:</strong> {message["content"]}{source_text}</div>', 
-                    unsafe_allow_html=True
-                )
-    
-    # Footer
-    st.markdown("""
-    <div style="text-align:center; margin-top:30px; padding-top:20px; border-top:1px solid #eee;">
-        <p class="small-font">Vytvořeno jako demonstrace AI schopností. Tento chatbot představuje pohled Filipa Dřímalky založený na jeho veřejných vystoupeních a publikacích.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-# Spuštění aplikace
-if __name__ == "__main__":
-    main()
-
 # Inicializace session state - uchování konverzace
 if 'conversation' not in st.session_state:
     st.session_state.conversation = []
@@ -209,8 +104,8 @@ if 'conversation' not in st.session_state:
 if 'model' not in st.session_state:
     st.session_state.model = None
 
-if 'index' not in st.session_state:
-    st.session_state.index = None
+if 'embeddings' not in st.session_state:
+    st.session_state.embeddings = None
     
 if 'text_chunks' not in st.session_state:
     st.session_state.text_chunks = None
@@ -219,9 +114,9 @@ if 'chunk_sources' not in st.session_state:
     st.session_state.chunk_sources = None
 
 # Inicializace znalostní báze při prvním spuštění
-if st.session_state.index is None:
+if st.session_state.embeddings is None:
     with st.spinner('Načítám znalostní bázi...'):
-        st.session_state.index, st.session_state.text_chunks, st.session_state.chunk_sources = prepare_knowledge_base()
+        st.session_state.embeddings, st.session_state.text_chunks, st.session_state.chunk_sources = prepare_knowledge_base()
 
 # Rozšířená znalostní báze - myšlenky Filipa Dřímalky
 @st.cache_data
@@ -457,7 +352,7 @@ def create_text_chunks(knowledge_base, chunk_size=500, overlap=100):
         # Vyčištění textu - odstranění nadbytečných mezer
         text = re.sub(r'\s+', ' ', text).strip()
         
-                    # Pokud je text dostatečně krátký, zachováme ho celý
+        # Pokud je text dostatečně krátký, zachováme ho celý
         if len(text) <= chunk_size:
             chunks.append(text)
             chunk_sources.append(key)
@@ -484,19 +379,23 @@ def create_text_chunks(knowledge_base, chunk_size=500, overlap=100):
     return chunks, chunk_sources
 
 # Funkce pro vyhledávání nejrelevantnějších odpovědí
-def search_knowledge_base(query, index, text_chunks, chunk_sources, top_k=3, threshold=0.6):
+def search_knowledge_base(query, embeddings, text_chunks, chunk_sources, top_k=3, threshold=0.6):
     """Vyhledá nejrelevantnější chunky textu k dotazu."""
     model = get_embedding_model()
     query_embedding = model.encode([query], convert_to_numpy=True)
-    distances, indices = index.search(query_embedding, top_k)
     
-    # Kontrola relevance - pokud je vzdálenost příliš velká, nepoužijeme
+    # Výpočet kosinové podobnosti
+    similarities = cosine_similarity(query_embedding, embeddings)[0]
+    
+    # Seřazení indexů podle podobnosti (sestupně)
+    sorted_indices = np.argsort(similarities)[::-1][:top_k]
+    
+    # Kontrola relevance
     relevant_chunks = []
     relevant_sources = []
     
-    for i, idx in enumerate(indices[0]):
-        # Převod vzdálenosti na podobnost (větší hodnota = větší podobnost)
-        similarity = 1 - (distances[0][i] / 2)  # Přibližná konverze pro L2 vzdálenost
+    for idx in sorted_indices:
+        similarity = similarities[idx]
         
         if similarity >= threshold:
             relevant_chunks.append(text_chunks[idx])
@@ -520,11 +419,8 @@ def prepare_knowledge_base():
     
     # Konverze znalostní báze na embeddingy
     embeddings = model.encode(text_chunks, convert_to_numpy=True)
-    dimension = embeddings.shape[1]
-    index = faiss.IndexFlatL2(dimension)
-    index.add(embeddings)
     
-    return index, text_chunks, chunk_sources
+    return embeddings, text_chunks, chunk_sources
 
 # Funkce pro získání odpovědi od Claude
 def get_claude_response(prompt, context=None):
@@ -580,7 +476,7 @@ def process_query(query):
     # Vyhledání relevantních informací
     relevant_chunks, sources = search_knowledge_base(
         query, 
-        st.session_state.index, 
+        st.session_state.embeddings, 
         st.session_state.text_chunks, 
         st.session_state.chunk_sources
     )
@@ -602,4 +498,109 @@ def process_query(query):
         # Obecná odpověď, pokud nemáme relevantní informace
         response = get_claude_response(query)
         return response, None
+
+# Funkce pro načtení obrázku z URL
+@st.cache_data
+def load_image_from_url(url):
+    try:
+        response = requests.get(url)
+        img = Image.open(BytesIO(response.content))
+        return img
+    except Exception as e:
+        st.error(f"Chyba při načítání obrázku: {e}")
+        return None
+
+# Hlavní UI aplikace
+def main():
+    # Rozdělení na dva sloupce - sidebar a hlavní obsah
+    col1, col2 = st.columns([1, 3])
+    
+    # Hlavní sekce - levý sloupec pro profil
+    with col1:
+        st.image("https://filipdrimalka.cz/wp-content/uploads/2023/12/Filip-Drimalka-square.jpg", width=200)
+        st.markdown("<h2>Filip Dřímalka</h2>", unsafe_allow_html=True)
+        st.markdown("""
+        <div class="sidebar-info">
+            <p>Expert na digitální transformaci a autor knihy "Budoucnost (ne)práce".</p>
+            <p>Věří, že budoucnost patří lidem, kteří dokáží efektivně využívat AI jako svého asistenta.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("### Klíčová témata")
+        
+        # Klíčová témata jako kliknutelná tlačítka
+        topics = [
+            "Digitální transformace", 
+            "Budoucnost práce", 
+            "Hybridní inteligence",
+            "Celoživotní vzdělávání",
+            "Implementace AI",
+            "Společnost 5.0"
+        ]
+        
+        for topic in topics:
+            st.markdown(f'<div class="topic-pill" onclick="this.style.backgroundColor=\'#1E6FD9\';this.style.color=\'white\'">{topic}</div>', unsafe_allow_html=True)
+    
+    # Hlavní sekce
+    with col2:
+        st.markdown('<p class="main-header">AI Průvodce myšlenkami Filipa Dřímalky</p>', unsafe_allow_html=True)
+        st.markdown("Zeptejte se na cokoli o digitální transformaci, AI a budoucnosti práce z pohledu Filipa Dřímalky.")
+        
+        # Výběr z doporučených otázek
+        st.markdown('<p class="sub-header">Doporučené otázky:</p>', unsafe_allow_html=True)
+        selected_question = st.selectbox("", [""] + suggested_questions)
+        
+        # Vlastní otázka
+        st.markdown('<p class="sub-header">Nebo napište vlastní otázku:</p>', unsafe_allow_html=True)
+        user_input = st.text_input("", placeholder="Např.: Jak se připravit na změny způsobené AI?")
+        
+        # Odeslání dotazu
+        query = user_input if user_input else selected_question
+        
+        col_button1, col_button2 = st.columns([1, 5])
+        with col_button1:
+            if st.button("Odeslat"):
+                if query:
+                    with st.spinner('Filip přemýšlí nad odpovědí...'):
+                        # Získání odpovědi
+                        response, sources = process_query(query)
+                        
+                        # Přidání do historie konverzace
+                        st.session_state.conversation.append({"role": "user", "content": query})
+                        st.session_state.conversation.append({"role": "assistant", "content": response, "sources": sources})
+                else:
+                    st.warning("Prosím, zadejte otázku nebo vyberte z nabídky.")
+        
+        with col_button2:
+            if st.button("Nová konverzace"):
+                st.session_state.conversation = []
+                st.experimental_rerun()
+        
+        # Zobrazení historie konverzace
+        st.markdown("### Konverzace:")
+        
+        for message in st.session_state.conversation:
+            if message["role"] == "user":
+                st.markdown(f'<div class="message-container user-message"><strong>Vy:</strong> {message["content"]}</div>', unsafe_allow_html=True)
+            else:
+                source_text = ""
+                if "sources" in message and message["sources"]:
+                    sources = list(set([source.replace("_", " ") for source in message["sources"]]))
+                    source_text = f'<div class="citation">Zdroje: {", ".join(sources)}</div>'
+                
+                st.markdown(
+                    f'<div class="message-container assistant-message"><strong>Filip Dřímalka:</strong> {message["content"]}{source_text}</div>', 
+                    unsafe_allow_html=True
+                )
+    
+    # Footer
+    st.markdown("""
+    <div style="text-align:center; margin-top:30px; padding-top:20px; border-top:1px solid #eee;">
+        <p class="small-font">Vytvořeno jako demonstrace AI schopností. Tento chatbot představuje pohled Filipa Dřímalky založený na jeho veřejných vystoupeních a publikacích.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# Spuštění aplikace
+if __name__ == "__main__":
+    main()
             
