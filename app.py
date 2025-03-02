@@ -5,7 +5,6 @@ import re
 import os
 from PIL import Image
 import base64
-import anthropic  # pro Claude API
 import json
 from io import BytesIO
 import requests
@@ -417,49 +416,7 @@ def prepare_knowledge_base():
     
     return embeddings, text_chunks, chunk_sources
 
-# Funkce pro získání odpovědi od Claude
-def get_claude_response_simple(prompt, context=None):
-    try:
-        import requests
-        import json
-        
-        api_key = st.secrets["ANTHROPIC_API_KEY"]
-        
-        # Příprava dat pro API
-        if context:
-            system_message = f"""Jsi chatbot představující pohled Filipa Dřímalky na témata AI, digitální transformace a budoucnost práce.
-            Odpovídej v první osobě, jako by odpovídal přímo Filip Dřímalka. Použij následující kontext: {context}"""
-        else:
-            system_message = """Jsi chatbot představující pohled Filipa Dřímalky na témata AI, digitální transformace a budoucnost práce."""
-        
-        headers = {
-            "x-api-key": api_key,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json"
-        }
-        
-        data = {
-            "model": "claude-3-opus-20240229",
-            "max_tokens": 1000,
-            "system": system_message,
-            "messages": [{"role": "user", "content": prompt}]
-        }
-        
-        response = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers=headers,
-            json=data
-        )
-        
-        if response.status_code == 200:
-            return response.json()["content"][0]["text"]
-        else:
-            return f"Chyba API: {response.status_code}, {response.text}"
-    
-    except Exception as e:
-        return f"Chyba: {str(e)}"
-
-# Funkce pro zpracování dotazu
+# Funkce pro zpracování dotazu - NOVÁ VERZE bez Anthropic API
 def process_query(query):
     # Vyhledání relevantních informací
     relevant_chunks, sources = search_knowledge_base(
@@ -469,23 +426,43 @@ def process_query(query):
         st.session_state.chunk_sources
     )
     
-    # Získání odpovědi
+    # Vytvoření odpovědi přímo z nalezených informací
     if relevant_chunks:
-        # Sloučení relevantních informací
-        context = "\n\n".join(relevant_chunks)
-        sources_text = ", ".join(set(sources))
+        # Sloučení relevantních informací do jedné odpovědi
+        full_response = "\n\n".join(relevant_chunks)
         
-        # Získání odpovědi od Claude
-        response = get_claude_response(query, context)
+        # Jednoduchá úprava textu - použití první osoby pro Filipa Dřímalku
+        full_response = full_response.replace("Filip Dřímalka považuje", "Považuji")
+        full_response = full_response.replace("Filip Dřímalka zdůrazňuje", "Zdůrazňuji")
+        full_response = full_response.replace("Filip Dřímalka prosazuje", "Prosazuji")
+        full_response = full_response.replace("Filip Dřímalka doporučuje", "Doporučuji")
+        full_response = full_response.replace("Filip Dřímalka", "já, Filip Dřímalka,")
+        full_response = full_response.replace("Dřímalka věří", "Věřím")
+        full_response = full_response.replace("Podle Dřímalky", "Podle mě")
+        full_response = full_response.replace("Podle jeho", "Podle mého")
+        
+        # Přidání úvodu k odpovědi
+        intro = "Jako Filip Dřímalka, mohu k tomuto tématu říci následující:\n\n"
         
         # Přidání citace zdrojů
-        source_info = f"\n\nInformace vychází z: {sources_text}" if sources else ""
+        sources_text = ", ".join(set([s.replace("_", " ") for s in sources]))
+        source_info = f"\n\nTato odpověď vychází z mých myšlenek na témata: {sources_text}"
         
-        return response + source_info, sources
+        return intro + full_response + source_info, sources
     else:
         # Obecná odpověď, pokud nemáme relevantní informace
-        response = get_claude_response(query)
-        return response, None
+        general_response = """
+        Jako Filip Dřímalka se zaměřuji především na témata digitální transformace, umělé inteligence a budoucnosti práce. 
+        K tomuto konkrétnímu dotazu nemám specifické informace, ale rád odpovím na otázky z těchto oblastí.
+        
+        Můžete se mě zeptat například na:
+        - Jak AI mění pracovní trh
+        - Implementaci AI ve firmách
+        - Koncept hybridní inteligence
+        - Budoucí dovednosti v éře AI
+        - Celoživotní vzdělávání
+        """
+        return general_response, None
 
 # Funkce pro načtení obrázku z URL
 @st.cache_data
@@ -596,4 +573,3 @@ if st.session_state.embeddings is None:
 # Spuštění aplikace
 if __name__ == "__main__":
     main()
-            
