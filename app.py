@@ -87,6 +87,86 @@ if 'conversation' not in st.session_state:
 
 # Předem definované otázky a odpovědi
 qa_pairs = {
+    "Jaké jsou hlavní predikce Filipa Dřímalky ohledně AI pro rok 2025?":
+    """Pro rok 2025 jsem identifikoval několik klíčových predikcí v oblasti umělé inteligence:
+
+AI gramotnost výrazně vzroste - zaměstnanci i zákazníci budou vzdělanější a firmy budou investovat do praktických kurzů a workshopů.
+
+Digitální propast se prohloubí - rozdíly mezi "power users" a běžnými uživateli se zvětší, přičemž power users se stanou hnací silou inovací.
+
+Pragmatická bezpečnost nabude na významu - firmy budou muset strategicky hodnotit, kde má investice do bezpečnosti smysl a kde jde o zbytečné náklady.
+
+Lidský faktor zůstane klíčový - kontrola, validace a interpretace AI výsledků vyžaduje lidskou inteligenci a schopnost adaptace.
+
+AI se stane součástí osobního brandu i firemních značek - reputace bude ovlivněna kvalitou a spolehlivostí používaných AI nástrojů.
+
+Zaměstnavatelé nabízející moderní AI nástroje budou atraktivnější pro talenty - lidé budou vyhledávat role umožňující práci s nejnovějšími technologiemi.
+
+Cena "běžné inteligence" klesne prakticky na nulu - mnohé expertízy budou díky AI dostupné prakticky každému.
+
+Mnoho firem bude plýtvat prostředky na nevyužité AI služby - což povede k tlaku na optimalizaci a efektivnější využití.""",
+
+    "Co Filip Dřímalka doporučuje firmám pro úspěšnou adopci AI?":
+    """Pro úspěšnou adopci AI ve firmách doporučuji čtyři klíčové kroky:
+
+Začněte sami u sebe - nejlepší způsob, jak porozumět AI, je učit se přímo v praxi. Vyzkoušejte dostupné nástroje, experimentujte s nimi a zjistěte, co mohou přinést vaší práci.
+
+Testujte různé nástroje a modely - nejprve v malém měřítku hledejte inspiraci a experimentujte, než přistoupíte k plošné implementaci.
+
+Investujte do vzdělávání zaměstnanců - bez dostatečných znalostí a dovedností nemohou lidé plně využívat potenciál AI. Praktické workshopy a kurzy jsou klíčové.
+
+Spolupracujte s experty - zapojte AI specialisty a inovátory, kteří mohou přinést nové perspektivy a zkušenosti.
+
+Nejdůležitější je začít a postupně budovat znalosti a zkušenosti, protože AI se vyvíjí tak rychle, že čekání na "dokonalou" strategii znamená promarnit příležitosti.""",
+
+    "Co znamená koncept 'digitální propasti' podle Filipa Dřímalky?":
+    """Digitální propast je fenomén, který se v éře AI prohlubuje. Jde o rostoucí rozdíly mezi tzv. "power users" a ostatními uživateli digitálních technologií.
+
+Power users jsou lidé, kteří rychle adoptuji nové technologie, experimentují s nimi a dokáží je efektivně využívat pro zvýšení své produktivity a kreativity. Tito lidé se stávají klíčovými hnacími silami inovací ve firmách.
+
+Na druhé straně spektra jsou uživatelé, kteří se potýkají s nedostatkem digitálních dovedností nebo se změnám aktivně brání. Tato skupina může brzdit celkový technologický pokrok organizace.
+
+Tento trend volá po větší podpoře vzdělávání na základní i pokročilé úrovni. Firmy, které dokáží tuto propast překonat a efektivně vzdělávat všechny své zaměstnance, získají významnou konkurenční výhodu.
+
+Je důležité si uvědomit, že digitální propast není jen technologický problém, ale i sociální a organizační výzva vyžadující systematický přístup.""",
+
+    "Jak se podle Filipa Dřímalky změní hodnota 'inteligence' v éře AI?":
+    """S nástupem pokročilé umělé inteligence dochází k fenoménu, který nazývám "komoditní inteligence". Cena běžné "inteligence" v mnoha oblastech klesá prakticky na nulu, protože je nahrazována umělou inteligencí.
+
+To má několik zásadních důsledků:
+
+1. Expertíza, která dříve vyžadovala roky studia a praxe, je nyní částečně dostupná "na vyžádání" prostřednictvím AI nástrojů.
+
+2. Běžní lidé mohou díky AI porozumět složitým algoritmům, analýzám a informacím, které byly dříve doménou specialistů.
+
+3. Hodnota se přesouvá od samotného vlastnictví informací k schopnosti klást správné otázky, kriticky hodnotit výstupy AI a kreativně kombinovat různé perspektivy.
+
+4. Konkurenční výhoda firem i jednotlivců bude stále více záviset na tom, jak efektivně dokáží využívat AI k řešení komplexních problémů a vytváření nové hodnoty.
+
+Tento trend zásadně mění dynamiku na trhu práce i v byznysu obecně. Úspěšní budou ti, kdo nepřemýšlí o AI jako o náhradě lidí, ale jako o nástroji, který rozšiřuje lidské schopnosti.""",
+
+    "Co je podle Filipa Dřímalky 'AI plýtvání' a jak mu předcházet?":
+    """AI plýtvání je fenomén, kdy firmy investují do pokročilých AI služeb a nástrojů, ale plně nevyužívají jejich potenciál. Jde o rostoucí problém, který vidím u mnoha organizací:
+
+Firmy často platí za prémiové verze AI nástrojů, ze kterých využívají jen zlomek funkcí.
+
+Nakupují se řešení bez jasné strategie implementace a měření návratnosti investic.
+
+Zaměstnanci nemají dostatečné vzdělání a podporu, aby mohli nástroje efektivně používat.
+
+Jak tomuto plýtvání předcházet:
+
+1. Začněte s auditem aktuálního využití AI nástrojů - zjistěte, co skutečně používáte a s jakým přínosem.
+
+2. Vytvořte jasnou strategii adopce AI s měřitelnými cíli a KPI.
+
+3. Investujte do vzdělávání a podpory zaměstnanců souběžně s implementací technologií.
+
+4. Postupujte iterativně - začněte s menšími projekty, vyhodnocujte výsledky a postupně rozšiřujte úspěšné přístupy.
+
+5. Pravidelně přehodnocujte portfolio AI nástrojů a služeb - nebojte se ukončit spolupráci s těmi, které nepřinášejí očekávanou hodnotu.
+
+S rostoucí nabídkou AI služeb bude optimalizace jejich využití stále důležitějším aspektem efektivního řízení nákladů i inovačního potenciálu firem."""
     "Jak konkrétně AI mění pracovní trh a jaké profese zaniknou?": 
         """AI zásadně transformuje pracovní trh. Nejvíce ohroženy jsou profese založené na rutinních a opakujících se činnostech - administrativa, účetnictví, zákaznické linky, některé výrobní role.
 
@@ -376,167 +456,9 @@ def main():
         
         with col_button2:
             if st.button("Nová konverzace"):
-   "Jaké jsou hlavní predikce Filipa Dřímalky ohledně AI pro rok 2025?":
-    """Pro rok 2025 jsem identifikoval několik klíčových predikcí v oblasti umělé inteligence:
-
-AI gramotnost výrazně vzroste - zaměstnanci i zákazníci budou vzdělanější a firmy budou investovat do praktických kurzů a workshopů.
-
-Digitální propast se prohloubí - rozdíly mezi "power users" a běžnými uživateli se zvětší, přičemž power users se stanou hnací silou inovací.
-
-Pragmatická bezpečnost nabude na významu - firmy budou muset strategicky hodnotit, kde má investice do bezpečnosti smysl a kde jde o zbytečné náklady.
-
-Lidský faktor zůstane klíčový - kontrola, validace a interpretace AI výsledků vyžaduje lidskou inteligenci a schopnost adaptace.
-
-AI se stane součástí osobního brandu i firemních značek - reputace bude ovlivněna kvalitou a spolehlivostí používaných AI nástrojů.
-
-Zaměstnavatelé nabízející moderní AI nástroje budou atraktivnější pro talenty - lidé budou vyhledávat role umožňující práci s nejnovějšími technologiemi.
-
-Cena "běžné inteligence" klesne prakticky na nulu - mnohé expertízy budou díky AI dostupné prakticky každému.
-
-Mnoho firem bude plýtvat prostředky na nevyužité AI služby - což povede k tlaku na optimalizaci a efektivnější využití.""",
-
-"Co Filip Dřímalka doporučuje firmám pro úspěšnou adopci AI?":
-    """Pro úspěšnou adopci AI ve firmách doporučuji čtyři klíčové kroky:
-
-Začněte sami u sebe - nejlepší způsob, jak porozumět AI, je učit se přímo v praxi. Vyzkoušejte dostupné nástroje, experimentujte s nimi a zjistěte, co mohou přinést vaší práci.
-
-Testujte různé nástroje a modely - nejprve v malém měřítku hledejte inspiraci a experimentujte, než přistoupíte k plošné implementaci.
-
-Investujte do vzdělávání zaměstnanců - bez dostatečných znalostí a dovedností nemohou lidé plně využívat potenciál AI. Praktické workshopy a kurzy jsou klíčové.
-
-Spolupracujte s experty - zapojte AI specialisty a inovátory, kteří mohou přinést nové perspektivy a zkušenosti.
-
-Nejdůležitější je začít a postupně budovat znalosti a zkušenosti, protože AI se vyvíjí tak rychle, že čekání na "dokonalou" strategii znamená promarnit příležitosti.""",
-
-"Co znamená koncept 'digitální propasti' podle Filipa Dřímalky?":
-    """Digitální propast je fenomén, který se v éře AI prohlubuje. Jde o rostoucí rozdíly mezi tzv. "power users" a ostatními uživateli digitálních technologií.
-
-Power users jsou lidé, kteří rychle adoptuji nové technologie, experimentují s nimi a dokáží je efektivně využívat pro zvýšení své produktivity a kreativity. Tito lidé se stávají klíčovými hnacími silami inovací ve firmách.
-
-Na druhé straně spektra jsou uživatelé, kteří se potýkají s nedostatkem digitálních dovedností nebo se změnám aktivně brání. Tato skupina může brzdit celkový technologický pokrok organizace.
-
-Tento trend volá po větší podpoře vzdělávání na základní i pokročilé úrovni. Firmy, které dokáží tuto propast překonat a efektivně vzdělávat všechny své zaměstnance, získají významnou konkurenční výhodu.
-
-Je důležité si uvědomit, že digitální propast není jen technologický problém, ale i sociální a organizační výzva vyžadující systematický přístup.""",
-
-"Jak se podle Filipa Dřímalky změní hodnota 'inteligence' v éře AI?":
-    """S nástupem pokročilé umělé inteligence dochází k fenoménu, který nazývám "komoditní inteligence". Cena běžné "inteligence" v mnoha oblastech klesá prakticky na nulu, protože je nahrazována umělou inteligencí.
-
-To má několik zásadních důsledků:
-
-1. Expertíza, která dříve vyžadovala roky studia a praxe, je nyní částečně dostupná "na vyžádání" prostřednictvím AI nástrojů.
-
-2. Běžní lidé mohou díky AI porozumět složitým algoritmům, analýzám a informacím, které byly dříve doménou specialistů.
-
-3. Hodnota se přesouvá od samotného vlastnictví informací k schopnosti klást správné otázky, kriticky hodnotit výstupy AI a kreativně kombinovat různé perspektivy.
-
-4. Konkurenční výhoda firem i jednotlivců bude stále více záviset na tom, jak efektivně dokáží využívat AI k řešení komplexních problémů a vytváření nové hodnoty.
-
-Tento trend zásadně mění dynamiku na trhu práce i v byznysu obecně. Úspěšní budou ti, kdo nepřemýšlí o AI jako o náhradě lidí, ale jako o nástroji, který rozšiřuje lidské schopnosti.""",
-
-"Co je podle Filipa Dřímalky 'AI plýtvání' a jak mu předcházet?":
-    """AI plýtvání je fenomén, kdy firmy investují do pokročilých AI služeb a nástrojů, ale plně nevyužívají jejich potenciál. Jde o rostoucí problém, který vidím u mnoha organizací:
-
-Firmy často platí za prémiové verze AI nástrojů, ze kterých využívají jen zlomek funkcí.
-
-Nakupují se řešení bez jasné strategie implementace a měření návratnosti investic.
-
-Zaměstnanci nemají dostatečné vzdělání a podporu, aby mohli nástroje efektivně používat.
-
-Jak tomuto plýtvání předcházet:
-
-1. Začněte s auditem aktuálního využití AI nástrojů - zjistěte, co skutečně používáte a s jakým přínosem.
-
-2. Vytvořte jasnou strategii adopce AI s měřitelnými cíli a KPI.
-
-3. Investujte do vzdělávání a podpory zaměstnanců souběžně s implementací technologií.
-
-4. Postupujte iterativně - začněte s menšími projekty, vyhodnocujte výsledky a postupně rozšiřujte úspěšné přístupy.
-
-5. Pravidelně přehodnocujte portfolio AI nástrojů a služeb - nebojte se ukončit spolupráci s těmi, které nepřinášejí očekávanou hodnotu.
-
-S rostoucí nabídkou AI služeb bude optimalizace jejich využití stále důležitějším aspektem efektivního řízení nákladů i inovačního potenciálu firem."""w             st.session_state.conversation = []
+                st.session_state.conversation = []
                 st.experimental_rerun()
-"Jaké jsou hlavní predikce Filipa Dřímalky ohledně AI pro rok 2025?":
-    """Pro rok 2025 jsem identifikoval několik klíčových predikcí v oblasti umělé inteligence:
-
-AI gramotnost výrazně vzroste - zaměstnanci i zákazníci budou vzdělanější a firmy budou investovat do praktických kurzů a workshopů.
-
-Digitální propast se prohloubí - rozdíly mezi "power users" a běžnými uživateli se zvětší, přičemž power users se stanou hnací silou inovací.
-
-Pragmatická bezpečnost nabude na významu - firmy budou muset strategicky hodnotit, kde má investice do bezpečnosti smysl a kde jde o zbytečné náklady.
-
-Lidský faktor zůstane klíčový - kontrola, validace a interpretace AI výsledků vyžaduje lidskou inteligenci a schopnost adaptace.
-
-AI se stane součástí osobního brandu i firemních značek - reputace bude ovlivněna kvalitou a spolehlivostí používaných AI nástrojů.
-
-Zaměstnavatelé nabízející moderní AI nástroje budou atraktivnější pro talenty - lidé budou vyhledávat role umožňující práci s nejnovějšími technologiemi.
-
-Cena "běžné inteligence" klesne prakticky na nulu - mnohé expertízy budou díky AI dostupné prakticky každému.
-
-Mnoho firem bude plýtvat prostředky na nevyužité AI služby - což povede k tlaku na optimalizaci a efektivnější využití.""",
-
-"Co Filip Dřímalka doporučuje firmám pro úspěšnou adopci AI?":
-    """Pro úspěšnou adopci AI ve firmách doporučuji čtyři klíčové kroky:
-
-Začněte sami u sebe - nejlepší způsob, jak porozumět AI, je učit se přímo v praxi. Vyzkoušejte dostupné nástroje, experimentujte s nimi a zjistěte, co mohou přinést vaší práci.
-
-Testujte různé nástroje a modely - nejprve v malém měřítku hledejte inspiraci a experimentujte, než přistoupíte k plošné implementaci.
-
-Investujte do vzdělávání zaměstnanců - bez dostatečných znalostí a dovedností nemohou lidé plně využívat potenciál AI. Praktické workshopy a kurzy jsou klíčové.
-
-Spolupracujte s experty - zapojte AI specialisty a inovátory, kteří mohou přinést nové perspektivy a zkušenosti.
-
-Nejdůležitější je začít a postupně budovat znalosti a zkušenosti, protože AI se vyvíjí tak rychle, že čekání na "dokonalou" strategii znamená promarnit příležitosti.""",
-
-"Co znamená koncept 'digitální propasti' podle Filipa Dřímalky?":
-    """Digitální propast je fenomén, který se v éře AI prohlubuje. Jde o rostoucí rozdíly mezi tzv. "power users" a ostatními uživateli digitálních technologií.
-
-Power users jsou lidé, kteří rychle adoptuji nové technologie, experimentují s nimi a dokáží je efektivně využívat pro zvýšení své produktivity a kreativity. Tito lidé se stávají klíčovými hnacími silami inovací ve firmách.
-
-Na druhé straně spektra jsou uživatelé, kteří se potýkají s nedostatkem digitálních dovedností nebo se změnám aktivně brání. Tato skupina může brzdit celkový technologický pokrok organizace.
-
-Tento trend volá po větší podpoře vzdělávání na základní i pokročilé úrovni. Firmy, které dokáží tuto propast překonat a efektivně vzdělávat všechny své zaměstnance, získají významnou konkurenční výhodu.
-
-Je důležité si uvědomit, že digitální propast není jen technologický problém, ale i sociální a organizační výzva vyžadující systematický přístup.""",
-
-"Jak se podle Filipa Dřímalky změní hodnota 'inteligence' v éře AI?":
-    """S nástupem pokročilé umělé inteligence dochází k fenoménu, který nazývám "komoditní inteligence". Cena běžné "inteligence" v mnoha oblastech klesá prakticky na nulu, protože je nahrazována umělou inteligencí.
-
-To má několik zásadních důsledků:
-
-1. Expertíza, která dříve vyžadovala roky studia a praxe, je nyní částečně dostupná "na vyžádání" prostřednictvím AI nástrojů.
-
-2. Běžní lidé mohou díky AI porozumět složitým algoritmům, analýzám a informacím, které byly dříve doménou specialistů.
-
-3. Hodnota se přesouvá od samotného vlastnictví informací k schopnosti klást správné otázky, kriticky hodnotit výstupy AI a kreativně kombinovat různé perspektivy.
-
-4. Konkurenční výhoda firem i jednotlivců bude stále více záviset na tom, jak efektivně dokáží využívat AI k řešení komplexních problémů a vytváření nové hodnoty.
-
-Tento trend zásadně mění dynamiku na trhu práce i v byznysu obecně. Úspěšní budou ti, kdo nepřemýšlí o AI jako o náhradě lidí, ale jako o nástroji, který rozšiřuje lidské schopnosti.""",
-
-"Co je podle Filipa Dřímalky 'AI plýtvání' a jak mu předcházet?":
-    """AI plýtvání je fenomén, kdy firmy investují do pokročilých AI služeb a nástrojů, ale plně nevyužívají jejich potenciál. Jde o rostoucí problém, který vidím u mnoha organizací:
-
-Firmy často platí za prémiové verze AI nástrojů, ze kterých využívají jen zlomek funkcí.
-
-Nakupují se řešení bez jasné strategie implementace a měření návratnosti investic.
-
-Zaměstnanci nemají dostatečné vzdělání a podporu, aby mohli nástroje efektivně používat.
-
-Jak tomuto plýtvání předcházet:
-
-1. Začněte s auditem aktuálního využití AI nástrojů - zjistěte, co skutečně používáte a s jakým přínosem.
-
-2. Vytvořte jasnou strategii adopce AI s měřitelnými cíli a KPI.
-
-3. Investujte do vzdělávání a podpory zaměstnanců souběžně s implementací technologií.
-
-4. Postupujte iterativně - začněte s menšími projekty, vyhodnocujte výsledky a postupně rozšiřujte úspěšné přístupy.
-
-5. Pravidelně přehodnocujte portfolio AI nástrojů a služeb - nebojte se ukončit spolupráci s těmi, které nepřinášejí očekávanou hodnotu.
-
-S rostoucí nabídkou AI služeb bude optimalizace jejich využití stále důležitějším aspektem efektivního řízení nákladů i inovačního potenciálu firem."""       
+        
         # Zobrazení historie konverzace
         st.markdown("### Konverzace:")
         
