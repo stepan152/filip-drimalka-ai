@@ -1,5 +1,5 @@
 st.markdown('<p class="sub-header">Vyberte otázku:</p>', unsafe_allow_html=True)
-        selected_question = st.selectbox("", [""] + list(qa_pairs.keys()))
+selected_question = st.selectbox("", [""] + list(qa_pairs.keys()))
         
         # Odeslání dotazu
         query = selected_question
