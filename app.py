@@ -145,8 +145,8 @@ To má několik zásadních důsledků:
 
 Tento trend zásadně mění dynamiku na trhu práce i v byznysu obecně. Úspěšní budou ti, kdo nepřemýšlí o AI jako o náhradě lidí, ale jako o nástroji, který rozšiřuje lidské schopnosti.""",
 
-    "Co je podle Filipa Dřímalky 'AI plýtvání' a jak mu předcházet?":
-    """AI plýtvání je fenomén, kdy firmy investují do pokročilých AI služeb a nástrojů, ale plně nevyužívají jejich potenciál. Jde o rostoucí problém, který vidím u mnoha organizací:
+        "Co je podle Filipa Dřímalky 'AI plýtvání' a jak mu předcházet?":
+        """AI plýtvání je fenomén, kdy firmy investují do pokročilých AI služeb a nástrojů, ale plně nevyužívají jejich potenciál. Jde o rostoucí problém, který vidím u mnoha organizací:
 
 Firmy často platí za prémiové verze AI nástrojů, ze kterých využívají jen zlomek funkcí.
 
@@ -167,14 +167,15 @@ Jak tomuto plýtvání předcházet:
 5. Pravidelně přehodnocujte portfolio AI nástrojů a služeb - nebojte se ukončit spolupráci s těmi, které nepřinášejí očekávanou hodnotu.
 
 S rostoucí nabídkou AI služeb bude optimalizace jejich využití stále důležitějším aspektem efektivního řízení nákladů i inovačního potenciálu firem."""
-    "Jak konkrétně AI mění pracovní trh a jaké profese zaniknou?": 
+    
+        "Jak konkrétně AI mění pracovní trh a jaké profese zaniknou?": 
         """AI zásadně transformuje pracovní trh. Nejvíce ohroženy jsou profese založené na rutinních a opakujících se činnostech - administrativa, účetnictví, zákaznické linky, některé výrobní role.
 
 AI dokáže tyto opakující se úkoly řešit efektivněji, rychleji a s menší chybovostí. Naopak posílí role vyžadující kreativitu, empatii, kritické myšlení a řešení komplexních problémů.
 
 Budoucnost patří lidem, kteří dokáží efektivně spolupracovat s umělou inteligencí. Klíčové je rozvíjet schopnosti, které AI nemá - kreativní myšlení, mezilidské dovednosti a adaptabilitu na neustálé změny.""",
     
-    "Jaké konkrétní dovednosti budou v budoucnu nejvíce ceněné díky AI?":
+        "Jaké konkrétní dovednosti budou v budoucnu nejvíce ceněné díky AI?":
         """V éře AI budou nejcennější tyto dovednosti:
 
 1. Digitální gramotnost - schopnost strategicky využívat technologie, i když ne nutně programovat
