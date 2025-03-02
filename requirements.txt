@@ -2,7 +2,6 @@ streamlit==1.29.0
 sentence-transformers==2.2.2
 huggingface-hub==0.16.4
 numpy==1.26.2
-anthropic==0.19.1
 Pillow==10.1.0
 requests==2.31.0
 scikit-learn>=1.2.0
