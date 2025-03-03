@@ -2,6 +2,7 @@ import streamlit as st
 from PIL import Image
 import requests
 from io import BytesIO
+import base64
 
 # Konfigurace stránky
 st.set_page_config(
@@ -11,73 +12,196 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# CSS pro lepší vzhled
+# CSS pro lepší vzhled a animace
 st.markdown("""
 <style>
+    /* Základní styly a barvy */
+    :root {
+        --main-blue: #1E6FD9;
+        --light-blue: #e9f0fd;
+        --dark-blue: #1550a0;
+        --gray: #6c757d;
+        --light-gray: #f0f0f0;
+        --white: #ffffff;
+    }
+    
+    body {
+        font-family: 'Segoe UI', 'Roboto', sans-serif;
+        background-color: #f9fafc;
+    }
+    
+    /* Hlavní nadpisy */
     .main-header {
         font-size: 2.2rem;
         font-weight: 600;
-        color: #1E6FD9;
+        color: var(--main-blue);
         margin-bottom: 1rem;
+        animation: fadeIn 1s ease-in-out;
     }
+    
     .sub-header {
         font-size: 1.5rem;
         font-weight: 500;
         color: #333;
         margin-bottom: 0.8rem;
+        animation: slideInRight 0.7s ease-out;
     }
+    
+    /* Tlačítka */
     .stButton > button {
-        background-color: #1E6FD9;
+        background-color: var(--main-blue);
         color: white;
         border-radius: 5px;
         font-weight: 500;
         padding: 0.5rem 1rem;
         border: none;
         transition: all 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+    
     .stButton > button:hover {
-        background-color: #1550a0;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        background-color: var(--dark-blue);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transform: translateY(-2px);
     }
+    
+    /* Kontejnery zpráv */
     .message-container {
         padding: 1rem;
         margin-bottom: 1rem;
-        border-radius: 5px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        animation: fadeIn 0.5s ease-out;
+        display: flex;
+        align-items: flex-start;
     }
+    
     .user-message {
-        background-color: #f0f0f0;
-        border-left: 4px solid #1E6FD9;
+        background-color: var(--light-gray);
+        border-left: 4px solid var(--main-blue);
+        margin-left: 50px;
     }
+    
     .assistant-message {
-        background-color: #f7f9fd;
-        border-left: 4px solid #6c757d;
+        background-color: var(--light-blue);
+        border-left: 4px solid var(--gray);
+        margin-right: 50px;
     }
+    
+    /* Avatary */
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 15px;
+        object-fit: cover;
+        border: 2px solid white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .message-content {
+        flex-grow: 1;
+    }
+    
+    /* Ozdobné prvky */
     .small-font {
         font-size: 0.8rem;
-        color: #6c757d;
+        color: var(--gray);
     }
+    
     .topic-pill {
         display: inline-block;
-        background-color: #e9f0fd;
-        border: 1px solid #1E6FD9;
-        color: #1E6FD9;
+        background-color: var(--light-blue);
+        border: 1px solid var(--main-blue);
+        color: var(--main-blue);
         border-radius: 20px;
-        padding: 0.2rem 0.8rem;
-        margin: 0.2rem;
-        font-size: 0.8rem;
+        padding: 0.3rem 1rem;
+        margin: 0.3rem;
+        font-size: 0.9rem;
         cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
+    
+    .topic-pill:hover {
+        background-color: var(--main-blue);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+    }
+    
     .sidebar-info {
-        background-color: #f7f9fd;
-        padding: 1rem;
-        border-radius: 5px;
-        border-left: 3px solid #1E6FD9;
+        background-color: var(--light-blue);
+        padding: 1.2rem;
+        border-radius: 10px;
+        border-left: 4px solid var(--main-blue);
         margin: 1rem 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
+    
+    /* Animace */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideInRight {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .animate-slide-up {
+        animation: slideUp 0.5s ease-out;
+    }
+    
+    /* Vylepšení pozadí a barev */
+    .main-container {
+        background: linear-gradient(to bottom right, #f7f9ff, #eef2fa);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    /* Skrytí Streamlit komponent */
     footer {visibility: hidden;}
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     .stDeployButton {visibility: hidden;}
+    
+    /* Product showcase */
+    .product-showcase {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+        animation: fadeIn 1s ease-in-out;
+    }
+    
+    .product-card {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: all 0.3s;
+        max-width: 150px;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .product-card img {
+        max-width: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -399,19 +523,39 @@ def load_image_from_url(url):
         st.error(f"Chyba při načítání obrázku: {e}")
         return None
 
+# Funkce pro načtení obrázku z URL a konverze na base64 pro vložení do HTML
+@st.cache_data
+def get_image_as_base64(url):
+    try:
+        response = requests.get(url)
+        img = Image.open(BytesIO(response.content))
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        return base64.b64encode(buffered.getvalue()).decode()
+    except Exception as e:
+        st.error(f"Chyba při načítání obrázku: {e}")
+        return None
+
+# Načtení avatarů
+filip_avatar = get_image_as_base64("https://filipdrimalka.cz/wp-content/uploads/2023/12/Filip-Drimalka-square.jpg")
+user_avatar = get_image_as_base64("https://cdn-icons-png.flaticon.com/512/1077/1077114.png")  # Obecná ikona uživatele
+
 # Hlavní UI aplikace
 def main():
+    # Kontejner s gradientovým pozadím
+    st.markdown('<div class="main-container">', unsafe_allow_html=True)
+    
     # Rozdělení na dva sloupce - sidebar a hlavní obsah
     col1, col2 = st.columns([1, 3])
     
     # Hlavní sekce - levý sloupec pro profil
     with col1:
-        st.image("https://filipdrimalka.cz/wp-content/uploads/2023/12/Filip-Drimalka-square.jpg", width=200)
+        st.image("https://filipdrimalka.cz/wp-content/uploads/2023/12/Filip-Drimalka-square.jpg", width=180)
         st.markdown("<h2>Filip Dřímalka</h2>", unsafe_allow_html=True)
         st.markdown("""
         <div class="sidebar-info">
             <p>Expert na digitální transformaci a autor knihy "Budoucnost (ne)práce".</p>
-            <p>Věří, že budoucnost patří lidem, kteří dokáží efektivně využívat AI jako svého asistenta.</p>
+            <p>Průkopník v oblasti implementace AI a digitálních strategií pro firmy.</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -428,7 +572,24 @@ def main():
         ]
         
         for topic in topics:
-            st.markdown(f'<div class="topic-pill" onclick="this.style.backgroundColor=\'#1E6FD9\';this.style.color=\'white\'">{topic}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="topic-pill">{topic}</div>', unsafe_allow_html=True)
+        
+        # Sekce "Projekty a publikace"
+        st.markdown("### Projekty a publikace")
+        
+        # Showcase produktů (kniha, startupy)
+        st.markdown("""
+        <div class="product-showcase">
+            <div class="product-card">
+                <img src="https://www.luxor.cz/products/xx/9788025746/9788025746462.jpg" alt="Kniha Budoucnost (ne)práce">
+                <p>Budoucnost (ne)práce</p>
+            </div>
+            <div class="product-card">
+                <img src="https://digiskills.cz/wp-content/uploads/2021/08/Digiskills-logo-nowe.png" alt="Digiskills">
+                <p>Digiskills.cz</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Hlavní sekce
     with col2:
@@ -460,24 +621,38 @@ def main():
                 st.session_state.conversation = []
                 st.experimental_rerun()
         
-        # Zobrazení historie konverzace
+        # Zobrazení historie konverzace s avatary
         st.markdown("### Konverzace:")
         
-        for message in st.session_state.conversation:
+        for i, message in enumerate(st.session_state.conversation):
             if message["role"] == "user":
-                st.markdown(f'<div class="message-container user-message"><strong>Vy:</strong> {message["content"]}</div>', unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="message-container user-message animate-slide-up" style="animation-delay: {i*0.1}s">
+                    <img src="data:image/png;base64,{user_avatar}" class="avatar" alt="User">
+                    <div class="message-content">
+                        <strong>Vy:</strong> {message["content"]}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
             else:
-                st.markdown(
-                    f'<div class="message-container assistant-message"><strong>Filip Dřímalka:</strong> {message["content"]}</div>', 
-                    unsafe_allow_html=True
-                )
+                st.markdown(f"""
+                <div class="message-container assistant-message animate-slide-up" style="animation-delay: {i*0.1}s">
+                    <img src="data:image/png;base64,{filip_avatar}" class="avatar" alt="Filip Dřímalka">
+                    <div class="message-content">
+                        <strong>Filip Dřímalka:</strong> {message["content"]}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
     
     # Footer
     st.markdown("""
-    <div style="text-align:center; margin-top:30px; padding-top:20px; border-top:1px solid #eee;">
+    <div style="text-align:center; margin-top:30px; padding-top:20px; border-top:1px solid #eee;" class="animate-slide-up">
         <p class="small-font">Vytvořeno jako demonstrace AI schopností. Tento chatbot představuje pohled Filipa Dřímalky založený na jeho veřejných vystoupeních a publikacích.</p>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Ukončení hlavního kontejneru
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Spuštění aplikace
 if __name__ == "__main__":
