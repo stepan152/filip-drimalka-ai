@@ -537,7 +537,7 @@ def get_image_as_base64(url):
         return None
 
 # Načtení avatarů
-filip_avatar = get_image_as_base64("https://filipdrimalka.cz/wp-content/uploads/2023/12/Filip-Drimalka-square.jpg")
+filip_avatar = "images/filip_avatar.png"
 user_avatar = get_image_as_base64("https://cdn-icons-png.flaticon.com/512/1077/1077114.png")  # Obecná ikona uživatele
 
 # Hlavní UI aplikace
@@ -550,7 +550,7 @@ def main():
     
     # Hlavní sekce - levý sloupec pro profil
     with col1:
-        st.image("https://filipdrimalka.cz/wp-content/uploads/2023/12/Filip-Drimalka-square.jpg", width=180)
+        st.image("images/filip avatar.png", width=180)
         st.markdown("<h2>Filip Dřímalka</h2>", unsafe_allow_html=True)
         st.markdown("""
         <div class="sidebar-info">
@@ -581,11 +581,11 @@ def main():
         st.markdown("""
         <div class="product-showcase">
             <div class="product-card">
-                <img src="https://www.luxor.cz/products/xx/9788025746/9788025746462.jpg" alt="Kniha Budoucnost (ne)práce">
+                <img src="images/kniha foto.jpg">
                 <p>Budoucnost (ne)práce</p>
             </div>
             <div class="product-card">
-                <img src="https://digiskills.cz/wp-content/uploads/2021/08/Digiskills-logo-nowe.png" alt="Digiskills">
+                <img src="images/digiskills logo.png">
                 <p>Digiskills.cz</p>
             </div>
         </div>
