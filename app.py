@@ -581,11 +581,11 @@ def main():
         st.markdown("""
         <div class="product-showcase">
             <div class="product-card">
-                <img src="images/kniha foto.jpg">
+                <img src="images/kniha_foto.jpg">
                 <p>Budoucnost (ne)práce</p>
             </div>
             <div class="product-card">
-                <img src="images/digiskills logo.png">
+                <img src="images/digiskills_logo.png">
                 <p>Digiskills.cz</p>
             </div>
         </div>
@@ -628,7 +628,7 @@ def main():
             if message["role"] == "user":
                 st.markdown(f"""
                 <div class="message-container user-message animate-slide-up" style="animation-delay: {i*0.1}s">
-                    <img src="data:image/png;base64,{user_avatar}" class="avatar" alt="User">
+                    <img src="{user_avatar}" class="avatar" alt="User">
                     <div class="message-content">
                         <strong>Vy:</strong> {message["content"]}
                     </div>
@@ -637,7 +637,7 @@ def main():
             else:
                 st.markdown(f"""
                 <div class="message-container assistant-message animate-slide-up" style="animation-delay: {i*0.1}s">
-                    <img src="data:image/png;base64,{filip_avatar}" class="avatar" alt="Filip Dřímalka">
+                    <img src="{filip_avatar}" class="avatar" alt="Filip Dřímalka">
                     <div class="message-content">
                         <strong>Filip Dřímalka:</strong> {message["content"]}
                     </div>
