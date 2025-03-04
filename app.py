@@ -540,6 +540,16 @@ def get_image_as_base64(url):
 filip_avatar = "images/filip_avatar.png"
 user_avatar = get_image_as_base64("https://cdn-icons-png.flaticon.com/512/1077/1077114.png")  # Obecná ikona uživatele
 
+# Funkce pro kódování obrázku do base64
+def encode_image_to_base64(image_path):
+    try:
+        with open(image_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+            return f"data:image/png;base64,{encoded_string}"
+    except Exception as e:
+        st.error(f"Chyba při kódování obrázku: {e}")
+        return None
+
 # Hlavní UI aplikace
 def main():
     # Kontejner s gradientovým pozadím
@@ -638,6 +648,29 @@ def main():
                 st.markdown(f"""
                 <div class="message-container assistant-message animate-slide-up" style="animation-delay: {i*0.1}s">
                     <img src="{filip_avatar}" class="avatar" alt="Filip Dřímalka">
+                    <div class="message-content">
+                        <strong>Filip Dřímalka:</strong> {message["content"]}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+        # Použití statických cest k obrázkům
+        filip_img = "filip_avatar.png"
+        user_img = "user_avatar.png"
+        
+        for i, message in enumerate(st.session_state.conversation):
+            if message["role"] == "user":
+                st.markdown(f"""
+                <div class="message-container user-message animate-slide-up" style="animation-delay: {i*0.1}s">
+                    <img src="{user_img}" class="avatar" alt="User">
+                    <div class="message-content">
+                        <strong>Vy:</strong> {message["content"]}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown(f"""
+                <div class="message-container assistant-message animate-slide-up" style="animation-delay: {i*0.1}s">
+                    <img src="{filip_img}" class="avatar" alt="Filip Dřímalka">
                     <div class="message-content">
                         <strong>Filip Dřímalka:</strong> {message["content"]}
                     </div>
