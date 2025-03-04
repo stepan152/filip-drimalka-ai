@@ -523,15 +523,12 @@ def load_image_from_url(url):
         st.error(f"Chyba při načítání obrázku: {e}")
         return None
 
-# Funkce pro načtení obrázku z URL a konverze na base64 pro vložení do HTML
+# Funkce pro načtení obrázku a konverzi na base64
 @st.cache_data
-def get_image_as_base64(url):
+def encode_image_to_base64(image_path):
     try:
-        response = requests.get(url)
-        img = Image.open(BytesIO(response.content))
-        buffered = BytesIO()
-        img.save(buffered, format="PNG")
-        return base64.b64encode(buffered.getvalue()).decode()
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode()
     except Exception as e:
         st.error(f"Chyba při načítání obrázku: {e}")
         return None
@@ -540,15 +537,17 @@ def get_image_as_base64(url):
 filip_avatar = "images/filip_avatar.png"
 user_avatar = get_image_as_base64("https://cdn-icons-png.flaticon.com/512/1077/1077114.png")  # Obecná ikona uživatele
 
-# Funkce pro kódování obrázku do base64
-def encode_image_to_base64(image_path):
-    try:
-        with open(image_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode()
-            return f"data:image/png;base64,{encoded_string}"
-    except Exception as e:
-        st.error(f"Chyba při kódování obrázku: {e}")
-        return None
+# Cesty k obrázkům
+filip_avatar = "images/filip_avatar.png"
+user_avatar = "images/user_avatar.png"
+kniha_foto = "images/kniha_foto.jpg"
+digiskills_logo = "images/digiskill_logo.png"
+
+# Převedení obrázků do base64
+filip_avatar_b64 = encode_image_to_base64(filip_avatar)
+user_avatar_b64 = encode_image_to_base64(user_avatar)
+kniha_foto_b64 = encode_image_to_base64(kniha_foto)
+digiskills_logo_b64 = encode_image_to_base64(digiskills_logo)
 
 # Hlavní UI aplikace
 def main():
@@ -631,28 +630,21 @@ def main():
                 st.session_state.conversation = []
                 st.experimental_rerun()
         
-        # Zobrazení historie konverzace s avatary
-        st.markdown("### Konverzace:")
+        # Zobrazení konverzace
+        if "conversation" in st.session_state:
+            for message in st.session_state.conversation:
+                if message["role"] == "user":
+                    avatar = user_avatar_b64
+                else:
+                    avatar = filip_avatar_b64
         
-        for i, message in enumerate(st.session_state.conversation):
-            if message["role"] == "user":
                 st.markdown(f"""
-                <div class="message-container user-message animate-slide-up" style="animation-delay: {i*0.1}s">
-                    <img src="{user_avatar}" class="avatar" alt="User">
-                    <div class="message-content">
-                        <strong>Vy:</strong> {message["content"]}
-                    </div>
+                <div class="message-container {'user-message' if message['role'] == 'user' else 'assistant-message'}">
+                    <img src="data:image/png;base64,{avatar}" class="avatar">
+                    <div>{message['content']}</div>
                 </div>
                 """, unsafe_allow_html=True)
-            else:
-                st.markdown(f"""
-                <div class="message-container assistant-message animate-slide-up" style="animation-delay: {i*0.1}s">
-                    <img src="{filip_avatar}" class="avatar" alt="Filip Dřímalka">
-                    <div class="message-content">
-                        <strong>Filip Dřímalka:</strong> {message["content"]}
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                
         # Použití statických cest k obrázkům
         filip_img = "filip_avatar.png"
         user_img = "user_avatar.png"
@@ -676,6 +668,21 @@ def main():
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
+
+# Projekty a publikace
+st.markdown("### Projekty a publikace")
+st.markdown(f"""
+<div style="display: flex; gap: 20px;">
+    <div style="text-align: center;">
+        <img src="data:image/png;base64,{kniha_foto_b64}" width="100%">
+        <p>Budoucnost (ne)práce</p>
+    </div>
+    <div style="text-align: center;">
+        <img src="data:image/png;base64,{digiskills_logo_b64}" width="100%">
+        <p>Digiskills.cz</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
     
     # Footer
     st.markdown("""
